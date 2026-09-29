@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Create Account - CampusCircle</title>
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<div class="center-screen">
+  <div class="auth-box" style="max-width: 540px;">
+    <div class="logo"><span class="mark">🎯</span><span class="name">CampusCircle</span></div>
+    <h1>Create your account</h1>
+    <p class="sub">Tell us who you are so we can match you to the right opportunities.</p>
+
+    <div class="form-error" id="formError"></div>
+
+    <form id="registerForm">
+      <div class="role-toggle">
+        <label><input type="radio" name="role" value="student" checked /><span>🎓 Student</span></label>
+        <label><input type="radio" name="role" value="alumni" /><span>💼 Alumni</span></label>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="name" placeholder="Arjun Kumar" required />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="you@college.edu" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="At least 6 characters" required minlength="6" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>College</label>
+          <input type="text" id="college" placeholder="e.g. RMD Engineering College" />
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="city" placeholder="e.g. Chennai" />
+        </div>
+      </div>
+
+      <div class="field-row" id="studentFields">
+        <div class="field">
+          <label>Branch</label>
+          <input type="text" id="branch" placeholder="e.g. CSE" />
+        </div>
+        <div class="field">
+          <label>Year</label>
+          <select id="year">
+            <option value="">Select year</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field hidden" id="alumniFields">
+        <label>Current Company</label>
+        <input type="text" id="currentCompany" placeholder="e.g. Zoho Corporation" />
+      </div>
+
+      <div class="field">
+        <label>Skills</label>
+        <div class="tag-input-box" id="skillsBox">
+          <input type="text" id="skillsInput" placeholder="Type a skill and press Enter" />
+        </div>
+        <div class="suggestion-list" id="skillSuggestions"></div>
+      </div>
+
+      <div class="field" id="interestsField">
+        <label>Interested Opportunity Types</label>
+        <div class="chip-list" id="typeToggle">
+          <label class="chip" style="cursor:pointer;"><input type="checkbox" value="internship" style="margin-right:6px;" />Internship</label>
+          <label class="chip" style="cursor:pointer;"><input type="checkbox" value="project" style="margin-right:6px;" />Project</label>
+          <label class="chip" style="cursor:pointer;"><input type="checkbox" value="hackathon" style="margin-right:6px;" />Hackathon</label>
+          <label class="chip" style="cursor:pointer;"><input type="checkbox" value="freelance" style="margin-right:6px;" />Freelance</label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit" id="registerBtn">Create Account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+  const SUGGESTED_SKILLS = [
+    "Python","Java","C++","JavaScript","React","Node.js","AI/ML","Cloud Basics",
+    "UI/UX Design","Product Management","Data Analysis","Embedded Systems",
+    "Digital Marketing","Content Writing","Communication","System Design",
+  ];
+
+  document.querySelectorAll('input[name="role"]').forEach((r) => {
+    r.addEventListener("change", () => {
+      const isAlumni = document.querySelector('input[name="role"]:checked').value === "alumni";
+      document.getElementById("studentFields").classList.toggle("hidden", isAlumni);
+      document.getElementById("alumniFields").classList.toggle("hidden", !isAlumni);
+      document.getElementById("interestsField").classList.toggle("hidden", isAlumni);
+    });
+  });
+
+  function setupTagInput(boxId, inputId, suggestionsId) {
+    const box = document.getElementById(boxId);
+    const input = document.getElementById(inputId);
+    const suggestionsEl = document.getElementById(suggestionsId);
+    const tags = [];
+
+    function render() {
+      box.querySelectorAll(".chip").forEach((c) => c.remove());
+      tags.forEach((tag, i) => {
+        const chip = document.createElement("span");
+        chip.className = "chip chip-remove";
+        chip.innerHTML = `${escapeHtml(tag)} <button type="button" data-i="${i}">&times;</button>`;
+        box.insertBefore(chip, input);
+      });
+      box.querySelectorAll(".chip button").forEach((btn) => {
+        btn.addEventListener("click", () => { tags.splice(Number(btn.dataset.i), 1); render(); });
+      });
+    }
+
+    function addTag(value) {
+      const v = value.trim();
+      if (!v) return;
+      if (tags.some((t) => t.toLowerCase() === v.toLowerCase())) { input.value = ""; return; }
+      tags.push(v);
+      input.value = "";
+      render();
+    }
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(input.value); }
+    });
+    box.addEventListener("click", () => input.focus());
+
+    if (suggestionsEl) {
+      suggestionsEl.innerHTML = SUGGESTED_SKILLS.map((s) => `<span class="suggestion-chip" data-skill="${escapeHtml(s)}">+ ${escapeHtml(s)}</span>`).join("");
+      suggestionsEl.querySelectorAll(".suggestion-chip").forEach((el) => el.addEventListener("click", () => addTag(el.dataset.skill)));
+    }
+
+    return { getTags: () => tags };
+  }
+
+  const skillsTags = setupTagInput("skillsBox", "skillsInput", "skillSuggestions");
+
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errBox = document.getElementById("formError");
+    errBox.classList.remove("show");
+    const btn = document.getElementById("registerBtn");
+
+    const role = document.querySelector('input[name="role"]:checked').value;
+    const skills = skillsTags.getTags();
+    if (skills.length === 0) {
+      errBox.textContent = "Please add at least one skill.";
+      errBox.classList.add("show");
+      return;
+    }
+
+    const preferredTypes = Array.from(document.querySelectorAll('#typeToggle input:checked')).map((c) => c.value);
+
+    btn.disabled = true;
+    btn.textContent = "Creating account...";
+    try {
+      const body = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        role,
+        college: document.getElementById("college").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        branch: role === "student" ? document.getElementById("branch").value.trim() : "",
+        year: role === "student" && document.getElementById("year").value ? Number(document.getElementById("year").value) : null,
+        current_company: role === "alumni" ? document.getElementById("currentCompany").value.trim() : "",
+        skills,
+        interests: [],
+        preferred_types: preferredTypes,
+        preferred_mode: "any",
+      };
+      const data = await api("/auth/register", { method: "POST", body, auth: false });
+      setSession(data.access_token, data.user);
+      window.location.href = "/app";
+    } catch (err) {
+      errBox.textContent = err.message;
+      errBox.classList.add("show");
+      btn.disabled = false;
+      btn.textContent = "Create Account";
+    }
+  });
+</script>
+</body>
+</html>

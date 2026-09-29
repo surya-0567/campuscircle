@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CampusCircle - Dashboard</title>
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="mark">🎯</span> CampusCircle</div>
+    <nav id="navLinks">
+      <a href="#/dashboard" class="nav-link" data-route="dashboard"><span class="ic">🏠</span> Dashboard</a>
+      <a href="#/feed" class="nav-link" data-route="feed"><span class="ic">🧭</span> Opportunity Feed</a>
+      <a href="#/deadlines" class="nav-link" data-route="deadlines"><span class="ic">⏰</span> Deadline Alerts</a>
+      <a href="#/bookmarks" class="nav-link" data-route="bookmarks"><span class="ic">🔖</span> Saved</a>
+      <a href="#/applications" class="nav-link" data-route="applications"><span class="ic">📋</span> My Applications</a>
+
+      <div class="nav-section-label">Posting</div>
+      <a href="#/post" class="nav-link" data-route="post"><span class="ic">➕</span> Post Opportunity</a>
+      <a href="#/my-postings" class="nav-link" data-route="my-postings"><span class="ic">📦</span> My Postings</a>
+
+      <div class="nav-section-label">Account</div>
+      <a href="#/profile" class="nav-link" data-route="profile"><span class="ic">👤</span> My Profile</a>
+      <a href="#/settings" class="nav-link" data-route="settings"><span class="ic">⚙️</span> Settings</a>
+      <a href="#/admin" class="nav-link hidden" data-route="admin" id="adminLink"><span class="ic">🛡️</span> Admin</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="avatar" id="sidebarAvatar">?</div>
+        <div class="info">
+          <div class="n" id="sidebarName">Loading...</div>
+          <div class="e" id="sidebarEmail"></div>
+          <div class="role-pill" id="sidebarRole"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-block logout-btn" id="logoutBtn" style="color:#cfcdee;">Log Out</button>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <div class="topbar">
+      <div class="flex items-center gap-14">
+        <button class="mobile-menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h1 id="topbarTitle">Dashboard</h1>
+          <div class="sub" id="topbarSub"></div>
+        </div>
+      </div>
+      <div class="right">
+        <a href="#/post" class="btn btn-accent btn-sm">➕ Post Opportunity</a>
+      </div>
+    </div>
+    <div id="page-root" class="page">
+      <div class="loading-row"><div class="spinner"></div> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/views/dashboard.js"></script>
+<script src="/js/views/feed.js"></script>
+<script src="/js/views/opportunityDetail.js"></script>
+<script src="/js/views/postOpportunity.js"></script>
+<script src="/js/views/myPostings.js"></script>
+<script src="/js/views/myApplications.js"></script>
+<script src="/js/views/bookmarks.js"></script>
+<script src="/js/views/deadlines.js"></script>
+<script src="/js/views/profile.js"></script>
+<script src="/js/views/profileEdit.js"></script>
+<script src="/js/views/settings.js"></script>
+<script src="/js/views/admin.js"></script>
+<script src="/js/router.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
